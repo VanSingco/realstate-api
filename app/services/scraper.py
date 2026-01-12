@@ -1,41 +1,10 @@
-from typing import Optional, Any, Tuple
+from typing import Optional, Any
 from datetime import date
-from math import radians, sin, cos, sqrt, atan2
 import numpy as np
 import pandas as pd
 from homeharvest import scrape_property
 
 from app.schemas.property import ListingType, SortBy, Property
-
-
-def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """
-    Calculate the distance between two points on Earth using the Haversine formula.
-
-    Returns distance in miles.
-    """
-    R = 3959  # Earth's radius in miles
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    return 2 * R * atan2(sqrt(a), sqrt(1 - a))
-
-
-def get_center_coordinates(properties: list[dict]) -> Optional[Tuple[float, float]]:
-    """Get center coordinates from the first property with valid lat/lng."""
-    for prop in properties:
-        lat = prop.get("latitude")
-        lng = prop.get("longitude")
-        if lat is not None and lng is not None:
-            try:
-                lat_f = float(lat)
-                lng_f = float(lng)
-                if not (np.isnan(lat_f) or np.isnan(lng_f)):
-                    return (lat_f, lng_f)
-            except (ValueError, TypeError):
-                continue
-    return None
 
 
 def is_scalar_na(value: Any) -> bool:
@@ -190,29 +159,11 @@ def search_properties(
         # Convert to list of dictionaries
         records = df.to_dict(orient="records")
 
-        # Get center coordinates for distance calculation
-        center_coords = get_center_coordinates(records)
-
-        # Convert to Property objects with distance calculation
+        # Convert to Property objects
         properties = []
         for record in records:
             # Clean up the record - convert numpy types to Python types
             cleaned = {key: convert_value(value) for key, value in record.items()}
-
-            # Calculate distance if we have center coordinates and property coordinates
-            if center_coords is not None:
-                prop_lat = cleaned.get("latitude")
-                prop_lng = cleaned.get("longitude")
-                if prop_lat is not None and prop_lng is not None:
-                    try:
-                        distance = haversine_distance(
-                            center_coords[0], center_coords[1],
-                            float(prop_lat), float(prop_lng)
-                        )
-                        cleaned["distance_miles"] = round(distance, 2)
-                    except (ValueError, TypeError):
-                        cleaned["distance_miles"] = None
-
             properties.append(Property(**cleaned))
 
         return properties
