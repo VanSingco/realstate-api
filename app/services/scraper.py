@@ -12,35 +12,18 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     """
     Calculate the distance between two points on Earth using the Haversine formula.
 
-    Args:
-        lat1, lon1: Coordinates of the first point
-        lat2, lon2: Coordinates of the second point
-
-    Returns:
-        Distance in miles
+    Returns distance in miles.
     """
     R = 3959  # Earth's radius in miles
-
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
     dlon = lon2 - lon1
-
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-    return R * c
+    return 2 * R * atan2(sqrt(a), sqrt(1 - a))
 
 
 def get_center_coordinates(properties: list[dict]) -> Optional[Tuple[float, float]]:
-    """
-    Get center coordinates from the first property with valid lat/lng.
-
-    Args:
-        properties: List of property dictionaries
-
-    Returns:
-        Tuple of (latitude, longitude) or None if not found
-    """
+    """Get center coordinates from the first property with valid lat/lng."""
     for prop in properties:
         lat = prop.get("latitude")
         lng = prop.get("longitude")
@@ -231,17 +214,6 @@ def search_properties(
                         cleaned["distance_miles"] = None
 
             properties.append(Property(**cleaned))
-
-        # Filter by radius if specified
-        if radius is not None and center_coords is not None:
-            properties = [
-                p for p in properties
-                if p.distance_miles is not None and p.distance_miles <= radius
-            ]
-
-        # Sort by distance if radius filter is applied
-        if radius is not None:
-            properties.sort(key=lambda p: p.distance_miles if p.distance_miles is not None else float('inf'))
 
         return properties
 

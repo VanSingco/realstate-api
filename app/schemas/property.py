@@ -180,7 +180,7 @@ class Property(BaseModel):
     office_email: Optional[str] = None
     office_phones: Optional[Any] = None
 
-    # Distance (calculated field)
+    # Distance (calculated from search location)
     distance_miles: Optional[float] = None
 
     # Additional Fields

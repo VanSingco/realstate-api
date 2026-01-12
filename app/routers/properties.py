@@ -51,29 +51,51 @@ async def search_properties_get(
     For complex queries with many parameters, use POST /properties/search instead.
     """
     try:
-        properties = search_properties(
-            location=location,
-            listing_type=listing_type,
-            past_days=past_days,
-            past_hours=past_hours,
-            date_from=date_from,
-            date_to=date_to,
-            beds_min=beds_min,
-            beds_max=beds_max,
-            baths_min=baths_min,
-            baths_max=baths_max,
-            sqft_min=sqft_min,
-            sqft_max=sqft_max,
-            price_min=price_min,
-            price_max=price_max,
-            year_built_min=year_built_min,
-            year_built_max=year_built_max,
-            lot_sqft_min=lot_sqft_min,
-            lot_sqft_max=lot_sqft_max,
-            radius=radius,
-            sort_by=sort_by,
-            limit=limit,
-        )
+        # Build kwargs with only provided parameters
+        kwargs = {
+            "location": location,
+            "listing_type": listing_type,
+        }
+        if past_days is not None:
+            kwargs["past_days"] = past_days
+        if past_hours is not None:
+            kwargs["past_hours"] = past_hours
+        if date_from is not None:
+            kwargs["date_from"] = date_from
+        if date_to is not None:
+            kwargs["date_to"] = date_to
+        if beds_min is not None:
+            kwargs["beds_min"] = beds_min
+        if beds_max is not None:
+            kwargs["beds_max"] = beds_max
+        if baths_min is not None:
+            kwargs["baths_min"] = baths_min
+        if baths_max is not None:
+            kwargs["baths_max"] = baths_max
+        if sqft_min is not None:
+            kwargs["sqft_min"] = sqft_min
+        if sqft_max is not None:
+            kwargs["sqft_max"] = sqft_max
+        if price_min is not None:
+            kwargs["price_min"] = price_min
+        if price_max is not None:
+            kwargs["price_max"] = price_max
+        if year_built_min is not None:
+            kwargs["year_built_min"] = year_built_min
+        if year_built_max is not None:
+            kwargs["year_built_max"] = year_built_max
+        if lot_sqft_min is not None:
+            kwargs["lot_sqft_min"] = lot_sqft_min
+        if lot_sqft_max is not None:
+            kwargs["lot_sqft_max"] = lot_sqft_max
+        if radius is not None:
+            kwargs["radius"] = radius
+        if sort_by is not None:
+            kwargs["sort_by"] = sort_by
+        if limit is not None:
+            kwargs["limit"] = limit
+
+        properties = search_properties(**kwargs)
         return PropertySearchResponse(count=len(properties), properties=properties)
     except ScraperError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -90,29 +112,51 @@ async def search_properties_post(request: PropertySearchRequest):
     All parameters are passed in the JSON body.
     """
     try:
-        properties = search_properties(
-            location=request.location,
-            listing_type=request.listing_type,
-            past_days=request.past_days,
-            past_hours=request.past_hours,
-            date_from=request.date_from,
-            date_to=request.date_to,
-            beds_min=request.beds_min,
-            beds_max=request.beds_max,
-            baths_min=request.baths_min,
-            baths_max=request.baths_max,
-            sqft_min=request.sqft_min,
-            sqft_max=request.sqft_max,
-            price_min=request.price_min,
-            price_max=request.price_max,
-            year_built_min=request.year_built_min,
-            year_built_max=request.year_built_max,
-            lot_sqft_min=request.lot_sqft_min,
-            lot_sqft_max=request.lot_sqft_max,
-            radius=request.radius,
-            sort_by=request.sort_by,
-            limit=request.limit,
-        )
+        # Build kwargs with only provided parameters
+        kwargs = {
+            "location": request.location,
+            "listing_type": request.listing_type,
+        }
+        if request.past_days is not None:
+            kwargs["past_days"] = request.past_days
+        if request.past_hours is not None:
+            kwargs["past_hours"] = request.past_hours
+        if request.date_from is not None:
+            kwargs["date_from"] = request.date_from
+        if request.date_to is not None:
+            kwargs["date_to"] = request.date_to
+        if request.beds_min is not None:
+            kwargs["beds_min"] = request.beds_min
+        if request.beds_max is not None:
+            kwargs["beds_max"] = request.beds_max
+        if request.baths_min is not None:
+            kwargs["baths_min"] = request.baths_min
+        if request.baths_max is not None:
+            kwargs["baths_max"] = request.baths_max
+        if request.sqft_min is not None:
+            kwargs["sqft_min"] = request.sqft_min
+        if request.sqft_max is not None:
+            kwargs["sqft_max"] = request.sqft_max
+        if request.price_min is not None:
+            kwargs["price_min"] = request.price_min
+        if request.price_max is not None:
+            kwargs["price_max"] = request.price_max
+        if request.year_built_min is not None:
+            kwargs["year_built_min"] = request.year_built_min
+        if request.year_built_max is not None:
+            kwargs["year_built_max"] = request.year_built_max
+        if request.lot_sqft_min is not None:
+            kwargs["lot_sqft_min"] = request.lot_sqft_min
+        if request.lot_sqft_max is not None:
+            kwargs["lot_sqft_max"] = request.lot_sqft_max
+        if request.radius is not None:
+            kwargs["radius"] = request.radius
+        if request.sort_by is not None:
+            kwargs["sort_by"] = request.sort_by
+        if request.limit is not None:
+            kwargs["limit"] = request.limit
+
+        properties = search_properties(**kwargs)
         return PropertySearchResponse(count=len(properties), properties=properties)
     except ScraperError as e:
         raise HTTPException(status_code=500, detail=str(e))
