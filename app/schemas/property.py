@@ -21,6 +21,15 @@ class SortBy(str, Enum):
     LAST_UPDATE_DATE = "last_update_date"
 
 
+class PropertyType(str, Enum):
+    SINGLE_FAMILY = "single_family"
+    MULTI_FAMILY = "multi_family"
+    CONDO = "condo"
+    TOWNHOUSE = "townhouse"
+    LAND = "land"
+    OTHER = "other"
+
+
 class PropertySearchRequest(BaseModel):
     """Request model for property search with all HomeHarvest parameters."""
 
@@ -67,6 +76,10 @@ class PropertySearchRequest(BaseModel):
     year_built_max: Optional[int] = Field(None, le=2030, description="Maximum year built")
     lot_sqft_min: Optional[int] = Field(None, ge=0, description="Minimum lot square footage")
     lot_sqft_max: Optional[int] = Field(None, ge=0, description="Maximum lot square footage")
+    property_type: Optional[PropertyType] = Field(
+        None,
+        description="Type of property (single_family, multi_family, condo, townhouse, land, other)"
+    )
 
     # Search options
     radius: Optional[float] = Field(

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from homeharvest import scrape_property
 
-from app.schemas.property import ListingType, SortBy, Property
+from app.schemas.property import ListingType, SortBy, PropertyType, Property
 
 
 def is_scalar_na(value: Any) -> bool:
@@ -80,6 +80,7 @@ def search_properties(
     year_built_max: Optional[int] = None,
     lot_sqft_min: Optional[int] = None,
     lot_sqft_max: Optional[int] = None,
+    property_type: Optional[PropertyType] = None,
     radius: Optional[float] = None,
     sort_by: Optional[SortBy] = None,
     limit: Optional[int] = None,
@@ -140,6 +141,8 @@ def search_properties(
             kwargs["lot_sqft_min"] = lot_sqft_min
         if lot_sqft_max is not None:
             kwargs["lot_sqft_max"] = lot_sqft_max
+        if property_type is not None:
+            kwargs["property_type"] = [property_type.value]
 
         # Add optional search options
         if radius is not None:

@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Query
 from app.schemas.property import (
     ListingType,
     SortBy,
+    PropertyType,
     PropertySearchRequest,
     PropertySearchResponse,
 )
@@ -40,6 +41,7 @@ async def search_properties_get(
     year_built_max: Optional[int] = Query(None, le=2030, description="Maximum year built"),
     lot_sqft_min: Optional[int] = Query(None, ge=0, description="Minimum lot square footage"),
     lot_sqft_max: Optional[int] = Query(None, ge=0, description="Maximum lot square footage"),
+    property_type: Optional[PropertyType] = Query(None, description="Type of property (single_family, multi_family, condo, townhouse, land, other)"),
     radius: Optional[float] = Query(None, ge=0, description="Search radius in miles"),
     sort_by: Optional[SortBy] = Query(None, description="Sort results by this field"),
     limit: Optional[int] = Query(None, ge=1, le=10000, description="Maximum results (max 10,000)"),
@@ -88,6 +90,8 @@ async def search_properties_get(
             kwargs["lot_sqft_min"] = lot_sqft_min
         if lot_sqft_max is not None:
             kwargs["lot_sqft_max"] = lot_sqft_max
+        if property_type is not None:
+            kwargs["property_type"] = property_type
         if radius is not None:
             kwargs["radius"] = radius
         if sort_by is not None:
@@ -149,6 +153,8 @@ async def search_properties_post(request: PropertySearchRequest):
             kwargs["lot_sqft_min"] = request.lot_sqft_min
         if request.lot_sqft_max is not None:
             kwargs["lot_sqft_max"] = request.lot_sqft_max
+        if request.property_type is not None:
+            kwargs["property_type"] = request.property_type
         if request.radius is not None:
             kwargs["radius"] = request.radius
         if request.sort_by is not None:
