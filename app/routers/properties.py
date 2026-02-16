@@ -45,6 +45,8 @@ async def search_properties_get(
     radius: Optional[float] = Query(None, ge=0, description="Search radius in miles"),
     sort_by: Optional[SortBy] = Query(None, description="Sort results by this field"),
     limit: Optional[int] = Query(None, ge=1, le=10000, description="Maximum results (max 10,000)"),
+    offset: Optional[int] = Query(None, ge=0, description="Starting position for pagination"),
+    parallel: Optional[bool] = Query(None, description="Pagination strategy (True=parallel, False=sequential)"),
 ):
     """
     Search for properties using query parameters.
@@ -98,9 +100,13 @@ async def search_properties_get(
             kwargs["sort_by"] = sort_by
         if limit is not None:
             kwargs["limit"] = limit
+        if offset is not None:
+            kwargs["offset"] = offset
+        if parallel is not None:
+            kwargs["parallel"] = parallel
 
         properties = search_properties(**kwargs)
-        return PropertySearchResponse(count=len(properties), properties=properties)
+        return PropertySearchResponse(count=len(properties), properties=properties, total_count=len(properties))
     except ScraperError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
@@ -161,9 +167,13 @@ async def search_properties_post(request: PropertySearchRequest):
             kwargs["sort_by"] = request.sort_by
         if request.limit is not None:
             kwargs["limit"] = request.limit
+        if request.offset is not None:
+            kwargs["offset"] = request.offset
+        if request.parallel is not None:
+            kwargs["parallel"] = request.parallel
 
         properties = search_properties(**kwargs)
-        return PropertySearchResponse(count=len(properties), properties=properties)
+        return PropertySearchResponse(count=len(properties), properties=properties, total_count=len(properties))
     except ScraperError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:

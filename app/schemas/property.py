@@ -97,6 +97,15 @@ class PropertySearchRequest(BaseModel):
         le=10000,
         description="Maximum number of results to return (max 10,000)"
     )
+    offset: Optional[int] = Field(
+        None,
+        ge=0,
+        description="Starting position for pagination within the limit. Use with limit to fetch results in chunks."
+    )
+    parallel: Optional[bool] = Field(
+        None,
+        description="Controls pagination strategy. Default True (parallel for speed). False for sequential fetching."
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -215,3 +224,4 @@ class PropertySearchResponse(BaseModel):
 
     count: int = Field(..., description="Number of properties returned")
     properties: list[Property] = Field(..., description="List of properties")
+    total_count: Optional[int] = Field(None, description="Total number of matching properties (before offset/limit)")

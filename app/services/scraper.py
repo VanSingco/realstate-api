@@ -84,6 +84,8 @@ def search_properties(
     radius: Optional[float] = None,
     sort_by: Optional[SortBy] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    parallel: Optional[bool] = None,
 ) -> list[Property]:
     """
     Search for properties using HomeHarvest.
@@ -151,6 +153,10 @@ def search_properties(
             kwargs["sort_by"] = sort_by.value
         if limit is not None:
             kwargs["limit"] = limit
+        if offset is not None:
+            kwargs["offset"] = offset
+        if parallel is not None:
+            kwargs["parallel"] = parallel
 
         # Call HomeHarvest scraper
         df: pd.DataFrame = scrape_property(**kwargs)
